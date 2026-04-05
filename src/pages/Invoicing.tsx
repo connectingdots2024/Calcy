@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -9,8 +9,20 @@ import {
   Mail,
   MoreHorizontal
 } from 'lucide-react';
+import { auth } from '../firebase';
+import { getInvoices, getClients } from '../services/firebaseService';
 
 const Invoicing: React.FC = () => {
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      getInvoices(auth.currentUser.uid).then(setInvoices);
+      getClients(auth.currentUser.uid).then(setClients);
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -72,13 +84,7 @@ const Invoicing: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {[
-                { id: 'INV-2023-001', client: 'Acme Corp', date: 'Oct 30, 2023', amount: 4500.00, status: 'Paid' },
-                { id: 'INV-2023-002', client: 'Global Tech', date: 'Nov 05, 2023', amount: 2800.00, status: 'Pending' },
-                { id: 'INV-2023-003', client: 'Design Studio', date: 'Oct 20, 2023', amount: 1200.00, status: 'Overdue' },
-                { id: 'INV-2023-004', client: 'Marketing Pro', date: 'Nov 12, 2023', amount: 5600.00, status: 'Pending' },
-                { id: 'INV-2023-005', client: 'Solo Freelance', date: 'Oct 25, 2023', amount: 850.00, status: 'Paid' },
-              ].map((inv, i) => (
+              {invoices.map((inv, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
@@ -87,16 +93,20 @@ const Invoicing: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-slate-600 font-medium">{inv.client}</td>
-                  <td className="px-6 py-4 text-slate-500">{inv.date}</td>
+                  <td className="px-6 py-4 text-slate-500">{inv.dueDate}</td>
                   <td className="px-6 py-4 font-bold text-slate-900">
-                    {inv.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                    {inv.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      inv.status === 'Paid' ? 'bg-green-100 text-green-800' : 
-                      inv.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider gap-1.5 ${
+                      inv.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 
+                      inv.status === 'Sent' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 
+                      inv.status === 'Draft' ? 'bg-slate-100 text-slate-700 border border-slate-200' : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
+                      {inv.status === 'Paid' && <CheckCircle2 size={12} />}
+                      {inv.status === 'Sent' && <Mail size={12} />}
+                      {inv.status === 'Draft' && <FileText size={12} />}
+                      {inv.status === 'Overdue' && <AlertCircle size={12} />}
                       {inv.status}
                     </span>
                   </td>

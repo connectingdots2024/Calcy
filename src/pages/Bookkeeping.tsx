@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -9,9 +9,18 @@ import {
   MoreVertical,
   X
 } from 'lucide-react';
+import { auth } from '../firebase';
+import { getTransactions } from '../services/firebaseService';
 
 const Bookkeeping: React.FC = () => {
-  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      getTransactions(auth.currentUser.uid).then(setTransactions);
+    }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -59,25 +68,19 @@ const Bookkeeping: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {[
-                { date: 'Oct 24, 2023', desc: 'Apple Store Purchase', cat: 'Hardware', status: 'Completed', amount: -1299.00, type: 'expense' },
-                { date: 'Oct 23, 2023', desc: 'Stripe Payout', cat: 'Sales', status: 'Completed', amount: 4500.00, type: 'income' },
-                { date: 'Oct 22, 2023', desc: 'Office Rent', cat: 'Rent', status: 'Pending', amount: -2500.00, type: 'expense' },
-                { date: 'Oct 20, 2023', desc: 'AWS Cloud Services', cat: 'Software', status: 'Completed', amount: -450.20, type: 'expense' },
-                { date: 'Oct 18, 2023', desc: 'Client Payment - Project X', cat: 'Sales', status: 'Completed', amount: 8200.00, type: 'income' },
-              ].map((t, i) => (
+              {transactions.map((t, i) => (
                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4 text-slate-500">{t.date}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className={`p-2 rounded-lg mr-3 ${t.type === 'income' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                        {t.type === 'income' ? <ArrowDownRight size={16} /> : <ArrowUpRight size={16} />}
+                      <div className={`p-2 rounded-lg mr-3 ${t.type === 'Income' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                        {t.type === 'Income' ? <ArrowDownRight size={16} /> : <ArrowUpRight size={16} />}
                       </div>
-                      <span className="font-medium text-slate-900">{t.desc}</span>
+                      <span className="font-medium text-slate-900">{t.category}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-slate-100 rounded-md text-xs text-slate-600 font-medium">{t.cat}</span>
+                    <span className="px-2 py-1 bg-slate-100 rounded-md text-xs text-slate-600 font-medium">{t.category}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -86,8 +89,8 @@ const Bookkeeping: React.FC = () => {
                       {t.status}
                     </span>
                   </td>
-                  <td className={`px-6 py-4 text-right font-semibold ${t.type === 'income' ? 'text-green-600' : 'text-slate-900'}`}>
-                    {t.type === 'income' ? '+' : ''}{t.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                  <td className={`px-6 py-4 text-right font-semibold ${t.type === 'Income' ? 'text-green-600' : 'text-slate-900'}`}>
+                    {t.type === 'Income' ? '+' : ''}{t.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">

@@ -9,10 +9,13 @@ import Bookkeeping from './pages/Bookkeeping';
 import Invoicing from './pages/Invoicing';
 import Payroll from './pages/Payroll';
 import Accounting from './pages/Accounting';
+import Clients from './pages/Clients';
 import Documents from './pages/Documents';
 import Subscription from './pages/Subscription';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import Pricing from './pages/Pricing';
+import AdminDashboard from './pages/AdminDashboard';
 import LilliputAgent from './components/LilliputAgent';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -71,6 +74,12 @@ export default function App() {
           </ProtectedRoute>
         } />
 
+        <Route path="/clients" element={
+          <ProtectedRoute>
+            <Clients />
+          </ProtectedRoute>
+        } />
+
         <Route path="/documents" element={
           <ProtectedRoute>
             <Documents />
@@ -86,6 +95,18 @@ export default function App() {
         <Route path="/settings" element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/pricing" element={
+          <ProtectedRoute>
+            <Pricing />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         } />
 

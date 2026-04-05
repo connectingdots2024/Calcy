@@ -11,10 +11,10 @@ import {
   X,
   CreditCard,
   FileText,
-  PieChart
+  PieChart,
+  Shield
 } from 'lucide-react';
-import { auth, isPlaceholder } from '../firebase';
-import { signOut } from 'firebase/auth';
+import { auth, isPlaceholder, signOut } from '../firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { AlertTriangle } from 'lucide-react';
 
@@ -28,12 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    if (isPlaceholder) {
-      localStorage.removeItem('mock_user');
-      window.location.reload();
-      return;
-    }
-    await signOut(auth);
+    await signOut();
     navigate('/login');
   };
 
@@ -42,10 +37,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Bookkeeping', path: '/bookkeeping', icon: BookOpen },
     { name: 'Accounting', path: '/accounting', icon: PieChart },
     { name: 'Invoicing', path: '/invoicing', icon: Receipt },
+    { name: 'Clients', path: '/clients', icon: Users },
     { name: 'Payroll', path: '/payroll', icon: Users },
     { name: 'Documents', path: '/documents', icon: FileText },
-    { name: 'Subscription', path: '/subscription', icon: CreditCard },
+    { name: 'Pricing', path: '/pricing', icon: CreditCard },
     { name: 'Settings', path: '/settings', icon: Settings },
+    { name: 'Admin Panel', path: '/admin', icon: Shield },
   ];
 
   return (

@@ -7,7 +7,8 @@ import {
   CreditCard, 
   Mail,
   Globe,
-  Save
+  Save,
+  FileText
 } from 'lucide-react';
 
 const Settings: React.FC = () => {
@@ -77,23 +78,47 @@ const Settings: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Tax ID / GSTIN</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter Tax ID"
+                <label className="block text-sm font-medium text-slate-700 mb-2">Company Address</label>
+                <textarea 
+                  placeholder="Enter company address"
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Default Payment Terms</label>
                 <select className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary-500">
-                  <option>USD ($)</option>
-                  <option>INR (₹)</option>
-                  <option>EUR (€)</option>
-                  <option>GBP (£)</option>
+                  <option>Net 15</option>
+                  <option>Net 30</option>
+                  <option>Net 60</option>
+                  <option>Due on Receipt</option>
                 </select>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Invoice Templates */}
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                <FileText size={20} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">Invoice Templates</h3>
+            </div>
+            <button className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700">
+              Create Template
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {['Standard', 'Modern', 'Minimal'].map((template) => (
+              <div key={template} className="p-4 rounded-2xl border border-slate-200 hover:border-primary-200 transition-all cursor-pointer">
+                <div className="h-32 bg-slate-100 rounded-lg mb-4 flex items-center justify-center text-slate-400">Preview</div>
+                <h4 className="font-bold text-slate-900">{template}</h4>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -1,78 +1,162 @@
 {
   "entities": {
-    "UserProfile": {
-      "title": "User Profile",
-      "description": "User profile and role information",
+    "User": {
+      "title": "User",
+      "description": "User profile information",
       "type": "object",
       "properties": {
-        "uid": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "displayName": { "type": "string" },
-        "role": { "type": "string", "enum": ["admin", "accountant", "employee", "viewer"] },
-        "companyId": { "type": "string" }
-      },
-      "required": ["uid", "email", "role"]
-    },
-    "Organization": {
-      "title": "Organization",
-      "description": "Company or business entity",
-      "type": "object",
-      "properties": {
+        "id": { "type": "string" },
         "name": { "type": "string" },
-        "ownerId": { "type": "string" },
-        "subscriptionPlan": { "type": "string", "enum": ["free", "pro", "enterprise"] },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "plan": { "type": "string", "enum": ["Free", "Pro", "Business"] }
       },
-      "required": ["name", "ownerId"]
+      "required": ["id", "name", "email"]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "User subscription details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "plan": { "type": "string", "enum": ["Free", "Pro", "Business"] },
+        "status": { "type": "string", "enum": ["active", "canceled", "past_due"] },
+        "currentPeriodEnd": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "plan", "status"]
     },
     "Transaction": {
       "title": "Transaction",
-      "description": "Income or expense record",
+      "description": "Financial entry (income or expense)",
       "type": "object",
       "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["Income", "Expense"] },
         "amount": { "type": "number" },
-        "type": { "type": "string", "enum": ["income", "expense"] },
         "category": { "type": "string" },
-        "description": { "type": "string" },
-        "date": { "type": "string", "format": "date-time" },
-        "companyId": { "type": "string" },
-        "receiptUrl": { "type": "string" }
+        "date": { "type": "string", "format": "date" },
+        "userId": { "type": "string" }
       },
-      "required": ["amount", "type", "category", "date", "companyId"]
+      "required": ["id", "type", "amount", "category", "date", "userId"]
     },
     "Invoice": {
       "title": "Invoice",
-      "description": "Customer invoice",
+      "description": "Invoice details",
       "type": "object",
       "properties": {
-        "invoiceNumber": { "type": "string" },
-        "clientId": { "type": "string" },
-        "clientName": { "type": "string" },
-        "amount": { "type": "number" },
-        "status": { "type": "string", "enum": ["paid", "pending", "overdue"] },
-        "dueDate": { "type": "string", "format": "date-time" },
-        "items": { "type": "array" },
-        "companyId": { "type": "string" }
+        "id": { "type": "string" },
+        "client": { "type": "string" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["Draft", "Sent", "Paid", "Overdue"] },
+        "dueDate": { "type": "string", "format": "date" },
+        "userId": { "type": "string" }
       },
-      "required": ["invoiceNumber", "amount", "status", "dueDate", "companyId"]
+      "required": ["id", "client", "total", "status", "dueDate", "userId"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Client information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "userId"]
+    },
+    "InvoiceTemplate": {
+      "title": "InvoiceTemplate",
+      "description": "Custom invoice template",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "paymentTerms": { "type": "string" },
+        "branding": { "type": "object" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "name", "userId"]
+    },
+    "CompanySettings": {
+      "title": "CompanySettings",
+      "description": "Default company information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "companyName": { "type": "string" },
+        "address": { "type": "string" },
+        "defaultPaymentTerms": { "type": "string" },
+        "lastInvoiceNumber": { "type": "number" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "companyName", "userId"]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "Employee information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "salary": { "type": "number" },
+        "taxJurisdiction": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "salary", "taxJurisdiction", "userId"]
+    },
+    "TaxJurisdiction": {
+      "title": "TaxJurisdiction",
+      "description": "Tax jurisdiction rules",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "federalRate": { "type": "number" },
+        "stateRate": { "type": "number" },
+        "localRate": { "type": "number" }
+      },
+      "required": ["id", "name", "federalRate", "stateRate", "localRate"]
     }
   },
   "firestore": {
     "/users/{userId}": {
-      "schema": "UserProfile",
+      "schema": "User",
       "description": "User profiles"
     },
-    "/organizations/{orgId}": {
-      "schema": "Organization",
-      "description": "Organizations"
-    },
-    "/transactions/{transactionId}": {
+    "/users/{userId}/transactions/{transactionId}": {
       "schema": "Transaction",
-      "description": "Financial transactions"
+      "description": "User transactions"
     },
-    "/invoices/{invoiceId}": {
+    "/users/{userId}/invoices/{invoiceId}": {
       "schema": "Invoice",
-      "description": "Invoices"
+      "description": "User invoices"
+    },
+    "/users/{userId}/clients/{clientId}": {
+      "schema": "Client",
+      "description": "User clients"
+    },
+    "/users/{userId}/templates/{templateId}": {
+      "schema": "InvoiceTemplate",
+      "description": "User invoice templates"
+    },
+    "/users/{userId}/settings/company": {
+      "schema": "CompanySettings",
+      "description": "User company settings"
+    },
+    "/users/{userId}/employees/{employeeId}": {
+      "schema": "Employee",
+      "description": "User employees"
+    },
+    "/subscriptions/{subscriptionId}": {
+      "schema": "Subscription",
+      "description": "Global subscriptions"
+    },
+    "/taxJurisdictions/{jurisdictionId}": {
+      "schema": "TaxJurisdiction",
+      "description": "Global tax jurisdictions"
     }
   }
 }
